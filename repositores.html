@@ -307,6 +307,35 @@
     margin-bottom: 3px;
   }
 
+  .lot:not(:first-child){
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--line);
+  }
+  .add-lot{
+    width:100%;
+    border: 1.5px dashed var(--brand-green);
+    background: transparent;
+    color: var(--brand-green);
+    font-weight: 600;
+    font-size: 12px;
+    padding: 7px;
+    border-radius: 8px;
+    cursor:pointer;
+    margin-top: 8px;
+  }
+  .remove-lot{
+    display:block;
+    margin-top: 4px;
+    border:none;
+    background: none;
+    color: var(--red);
+    font-size: 11px;
+    font-weight: 600;
+    cursor:pointer;
+    padding: 0;
+  }
+
   .add-row{
     width:100%;
     border: 2px dashed var(--brand-green);
@@ -431,14 +460,11 @@
   <section class="panel active" id="panel-stock">
     <p class="section-hint">Control de stock semanal. Cargá lo que tengas en góndola / cámara para cada producto. Dejá en blanco lo que no aplique.</p>
 
-    <h2 class="section-title first">Fiambrería (feteados)</h2>
+    <h2 class="section-title first">Embutidos</h2>
     <div id="stock-fiambre-list"></div>
 
-    <h2 class="section-title">Cortes (cámara)</h2>
+    <h2 class="section-title">Cortes</h2>
     <div id="stock-cortes-list"></div>
-
-    <h2 class="section-title">Congelados</h2>
-    <div id="stock-congelados-list"></div>
 
     <button class="submit-btn" id="btn-stock">Enviar control de stock</button>
     <div class="status" id="status-stock"></div>
@@ -448,11 +474,8 @@
   <section class="panel" id="panel-pedido">
     <p class="section-hint">Pedido semanal. Indicá la cantidad a pedir de cada producto. Dejá en 0 o en blanco lo que no se pide.</p>
 
-    <h2 class="section-title first">Fiambrería — cantidad x blísters</h2>
+    <h2 class="section-title first">Embutidos — cantidad a pedir</h2>
     <div id="pedido-fiambre-list"></div>
-
-    <h2 class="section-title">Congelados — cantidad x cajas</h2>
-    <div id="pedido-congelados-list"></div>
 
     <button class="submit-btn" id="btn-pedido">Enviar pedido</button>
     <div class="status" id="status-pedido"></div>
@@ -487,35 +510,37 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzx9Mus5Jik8AZ5ubndm
 /* =========================================================
    DATOS DE PRODUCTOS (tomados de PLANILLAS_REPOSITORES.xlsx)
    ========================================================= */
-const FIAMBRE_ITEMS = [
-  { horus: "2746", planilla: "103",   nombre: "Chorizo Especial x 4 un. (env. vacío)" },
-  { horus: "2904", planilla: "4022",  nombre: "Bondiola Mini Bocha (env. vacío)" },
-  { horus: "2663", planilla: "404",   nombre: "Bondiola Feteada (env. vacío)" },
-  { horus: "2662", planilla: "403/2", nombre: "Lomito Feteado (env. vacío)" },
-  { horus: "2666", planilla: "405/1", nombre: "Jamón Crudo Grande Feteado (env. vacío)" },
-  { horus: "2874", planilla: "513",   nombre: "Salamín (env. vacío) Campo" },
-  { horus: "2867", planilla: "500/1", nombre: "Salamín x 2" },
-  { horus: "2665", planilla: "503",   nombre: "Salame Picado Grueso (env. vacío)" },
-  { horus: "2667", planilla: "201",   nombre: "Morcilla al Gancho Salada" },
-  { horus: "2935", planilla: "203",   nombre: "Morcilla San Agustín x 4 un. (env. vacío)" },
-  { horus: "2664", planilla: "101",   nombre: "Chorizo Parrillero en Gancho x 28 un." },
-  { horus: "3281", planilla: "",      nombre: "Chorizo en Gancho Saladillo" },
-  { horus: "3286", planilla: "",      nombre: "Morcilla Salada en Gancho Saladillo" },
-];
+const EMBUTIDOS_ITEMS = [
+  { horus: "2663", planilla: "404",   nombre: "Bondiola feteada E/V",           categoria: "Embutidos",  unidadPedido: "Blísters" },
+  { horus: "2746", planilla: "103",   nombre: "Chorizo fresco x 4 unid. E/V",   categoria: "Embutidos",  unidadPedido: "Blísters" },
+  { horus: "2664", planilla: "101",   nombre: "Chorizos frescos en gancho",     categoria: "Embutidos",  unidadPedido: "Blísters" },
+  { horus: "3281", planilla: "",      nombre: "Chorizos frescos FRS en gancho", categoria: "Embutidos",  unidadPedido: "Blísters" },
+  { horus: "2666", planilla: "405/1", nombre: "Jamón crudo feteado E/V",        categoria: "Embutidos",  unidadPedido: "Blísters" },
+  { horus: "2662", planilla: "403/2", nombre: "Lomito curado feteado E/V",      categoria: "Embutidos",  unidadPedido: "Blísters" },
+  { horus: "2904", planilla: "4022",  nombre: "Minibondiola E/V",               categoria: "Embutidos",  unidadPedido: "Blísters" },
+  { horus: "2935", planilla: "203",   nombre: "Morcilla E/V x 3 unid",          categoria: "Embutidos",  unidadPedido: "Blísters" },
+  { horus: "2667", planilla: "201",   nombre: "Morcillas en gancho",            categoria: "Embutidos",  unidadPedido: "Blísters" },
+  { horus: "3286", planilla: "",      nombre: "Morcilla FRS en gancho",         categoria: "Embutidos",  unidadPedido: "Blísters" },
+  { horus: "2874", planilla: "513",   nombre: "Salame de Campo E/V",            categoria: "Embutidos",  unidadPedido: "Blísters" },
+  { horus: "2867", planilla: "500/1", nombre: "Salame de Campo x 2",            categoria: "Embutidos",  unidadPedido: "Blísters" },
+  { horus: "2665", planilla: "503",   nombre: "Salame Premium E/V",             categoria: "Embutidos",  unidadPedido: "Blísters" },
+  { horus: "3265", planilla: "",      nombre: "Morcilla Dulce en gancho",       categoria: "Congelados", unidadPedido: "Cajas" },
+  { horus: "2973", planilla: "",      nombre: "Salame de Campo en bastón",      categoria: "Congelados", unidadPedido: "Cajas" },
+].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
+// "planilla" queda en los datos por si la planilla de Google Sheets todavía lo usa para
+// cruzar, pero ya no se le muestra al repositor (pidió ver solo el código Horus).
+// "categoria"/"unidadPedido" son por ítem: los 2 que venían de Congelados todavía viajan
+// a la planilla como "Congelados"/"Cajas" — pendiente que Eugenia confirme si también
+// pasan a "Embutidos"/lo mismo que el resto (ver decisiones.md).
 
 const CORTES_ITEMS = [
-  { num: "1", nombre: "Carré" },
-  { num: "2", nombre: "Matambre" },
-  { num: "3", nombre: "Churrasco" },
-  { num: "4", nombre: "Pecho" },
-  { num: "5", nombre: "Bondiola" },
-  { num: "6", nombre: "Jamón" },
-  { num: "7", nombre: "Paleta" },
-];
-
-const CONGELADOS_ITEMS = [
-  { horus: "", codigo: "", nombre: "Morcilla Dulce en Gancho" },
-  { horus: "2973", codigo: "500", nombre: "Salame Bastón Metro" },
+  { horus: "2752", nombre: "Bondiola" },
+  { horus: "2756", nombre: "Carré" },
+  { horus: "2751", nombre: "Churrasco" },
+  { horus: "2758", nombre: "Jamón" },
+  { horus: "2750", nombre: "Matambre" },
+  { horus: "2760", nombre: "Paleta" },
+  { horus: "2754", nombre: "Pecho con Manto" },
 ];
 
 const DEVOLUCION_PRODUCTOS = [
@@ -532,32 +557,52 @@ const MOTIVOS = ["Vencido", "Rotura de envase", "Error de pedido", "Devolución 
    ========================================================= */
 function el(html){ const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; }
 
-function renderStockFiambre(){
+function addLot(prefix, i){
+  const wrap = document.getElementById(`${prefix}-lots-${i}`);
+  const l = wrap.children.length;
+  const node = el(`
+    <div class="lot">
+      <div class="tag-inputs">
+        <div class="f">
+          <label>Góndola</label>
+          <input type="number" inputmode="decimal" min="0" step="1" id="${prefix}-gon-${i}-${l}">
+        </div>
+        <div class="f">
+          <label>Cámara</label>
+          <input type="number" inputmode="decimal" min="0" step="1" id="${prefix}-cam-${i}-${l}">
+        </div>
+        <div class="f">
+          <label>Vto.</label>
+          <input type="date" id="${prefix}-vto-${i}-${l}">
+        </div>
+      </div>
+      ${l > 0 ? `<button type="button" class="remove-lot">Quitar este vencimiento ✕</button>` : ''}
+    </div>
+  `);
+  if(l > 0){
+    node.querySelector('.remove-lot').addEventListener('click', () => node.remove());
+  }
+  wrap.appendChild(node);
+}
+
+function renderStockEmbutidos(){
   const wrap = document.getElementById('stock-fiambre-list');
-  FIAMBRE_ITEMS.forEach((p, i) => {
-    const codeLabel = p.planilla ? `H ${p.horus} · P ${p.planilla}` : `H ${p.horus}`;
+  EMBUTIDOS_ITEMS.forEach((p, i) => {
     wrap.appendChild(el(`
       <div class="tag">
         <div class="tag-head">
           <div class="tag-name">${p.nombre}</div>
-          <div class="tag-codes">${codeLabel}</div>
+          <div class="tag-codes">H ${p.horus}</div>
         </div>
-        <div class="tag-inputs">
-          <div class="f">
-            <label>Góndola</label>
-            <input type="number" inputmode="decimal" min="0" step="1" id="sf-gon-${i}">
-          </div>
-          <div class="f">
-            <label>Cámara</label>
-            <input type="number" inputmode="decimal" min="0" step="1" id="sf-cam-${i}">
-          </div>
-          <div class="f">
-            <label>Vto.</label>
-            <input type="date" id="sf-vto-${i}">
-          </div>
-        </div>
+        <div class="lots" id="sf-lots-${i}"></div>
+        <button type="button" class="add-lot" data-add-lot="sf-${i}">+ Otro vencimiento (otro lote)</button>
       </div>
     `));
+    addLot('sf', i);
+  });
+  wrap.querySelectorAll('[data-add-lot^="sf-"]').forEach(btn => {
+    const i = btn.getAttribute('data-add-lot').split('-')[1];
+    btn.addEventListener('click', () => addLot('sf', i));
   });
 }
 
@@ -568,7 +613,7 @@ function renderStockCortes(){
       <div class="tag">
         <div class="tag-head">
           <div class="tag-name">${p.nombre}</div>
-          <div class="tag-codes">${p.num}</div>
+          <div class="tag-codes">H ${p.horus}</div>
         </div>
         <div class="tag-inputs single">
           <div class="f">
@@ -581,70 +626,19 @@ function renderStockCortes(){
   });
 }
 
-function renderStockCongelados(){
-  const wrap = document.getElementById('stock-congelados-list');
-  CONGELADOS_ITEMS.forEach((p, i) => {
-    const codeLabel = p.horus ? `H ${p.horus} · P ${p.codigo}` : '';
-    wrap.appendChild(el(`
-      <div class="tag">
-        <div class="tag-head">
-          <div class="tag-name">${p.nombre}</div>
-          ${codeLabel ? `<div class="tag-codes">${codeLabel}</div>` : ''}
-        </div>
-        <div class="tag-inputs">
-          <div class="f">
-            <label>Góndola</label>
-            <input type="number" inputmode="decimal" min="0" step="1" id="scg-gon-${i}">
-          </div>
-          <div class="f">
-            <label>Cámara</label>
-            <input type="number" inputmode="decimal" min="0" step="1" id="scg-cam-${i}">
-          </div>
-          <div class="f">
-            <label>Vto.</label>
-            <input type="date" id="scg-vto-${i}">
-          </div>
-        </div>
-      </div>
-    `));
-  });
-}
-
-function renderPedidoFiambre(){
+function renderPedidoEmbutidos(){
   const wrap = document.getElementById('pedido-fiambre-list');
-  FIAMBRE_ITEMS.forEach((p, i) => {
-    const codeLabel = p.planilla ? `H ${p.horus} · P ${p.planilla}` : `H ${p.horus}`;
+  EMBUTIDOS_ITEMS.forEach((p, i) => {
     wrap.appendChild(el(`
       <div class="tag">
         <div class="tag-head">
           <div class="tag-name">${p.nombre}</div>
-          <div class="tag-codes">${codeLabel}</div>
+          <div class="tag-codes">H ${p.horus}</div>
         </div>
         <div class="tag-inputs single">
           <div class="f">
-            <label>Cant. blísters</label>
+            <label>Cantidad a pedir</label>
             <input type="number" inputmode="decimal" min="0" step="1" id="pf-cant-${i}">
-          </div>
-        </div>
-      </div>
-    `));
-  });
-}
-
-function renderPedidoCongelados(){
-  const wrap = document.getElementById('pedido-congelados-list');
-  CONGELADOS_ITEMS.forEach((p, i) => {
-    const codeLabel = p.horus ? `H ${p.horus} · P ${p.codigo}` : '';
-    wrap.appendChild(el(`
-      <div class="tag">
-        <div class="tag-head">
-          <div class="tag-name">${p.nombre}</div>
-          ${codeLabel ? `<div class="tag-codes">${codeLabel}</div>` : ''}
-        </div>
-        <div class="tag-inputs single">
-          <div class="f">
-            <label>Cant. cajas</label>
-            <input type="number" inputmode="decimal" min="0" step="1" id="pcg-cant-${i}">
           </div>
         </div>
       </div>
@@ -771,22 +765,20 @@ document.getElementById('btn-stock').addEventListener('click', () => {
   const fecha = val('fecha');
   const items = [];
 
-  FIAMBRE_ITEMS.forEach((p, i) => {
-    const gon = val(`sf-gon-${i}`), cam = val(`sf-cam-${i}`), vto = val(`sf-vto-${i}`);
-    if(gon || cam || vto){
-      items.push({ categoria: 'Fiambrería', codigoHorus: p.horus, codigoPlanilla: p.planilla, producto: p.nombre, gondola: gon, camara: cam, vencimiento: vto });
+  EMBUTIDOS_ITEMS.forEach((p, i) => {
+    const lotsWrap = document.getElementById(`sf-lots-${i}`);
+    const n = lotsWrap ? lotsWrap.children.length : 0;
+    for(let l = 0; l < n; l++){
+      const gon = val(`sf-gon-${i}-${l}`), cam = val(`sf-cam-${i}-${l}`), vto = val(`sf-vto-${i}-${l}`);
+      if(gon || cam || vto){
+        items.push({ categoria: p.categoria, codigoHorus: p.horus, codigoPlanilla: p.planilla, producto: p.nombre, gondola: gon, camara: cam, vencimiento: vto });
+      }
     }
   });
   CORTES_ITEMS.forEach((p, i) => {
     const cam = val(`sc-cam-${i}`);
     if(cam){
-      items.push({ categoria: 'Cortes', codigoHorus: '', codigoPlanilla: p.num, producto: p.nombre, gondola: '', camara: cam, vencimiento: '' });
-    }
-  });
-  CONGELADOS_ITEMS.forEach((p, i) => {
-    const gon = val(`scg-gon-${i}`), cam = val(`scg-cam-${i}`), vto = val(`scg-vto-${i}`);
-    if(gon || cam || vto){
-      items.push({ categoria: 'Congelados', codigoHorus: p.horus, codigoPlanilla: p.codigo, producto: p.nombre, gondola: gon, camara: cam, vencimiento: vto });
+      items.push({ categoria: 'Cortes', codigoHorus: p.horus, codigoPlanilla: '', producto: p.nombre, gondola: '', camara: cam, vencimiento: '' });
     }
   });
 
@@ -804,16 +796,10 @@ document.getElementById('btn-pedido').addEventListener('click', () => {
   const fecha = val('fecha');
   const items = [];
 
-  FIAMBRE_ITEMS.forEach((p, i) => {
+  EMBUTIDOS_ITEMS.forEach((p, i) => {
     const cant = val(`pf-cant-${i}`);
     if(cant && Number(cant) > 0){
-      items.push({ categoria: 'Fiambrería', codigoHorus: p.horus, codigoPlanilla: p.planilla, producto: p.nombre, cantidad: cant, unidadPedido: 'Blísters' });
-    }
-  });
-  CONGELADOS_ITEMS.forEach((p, i) => {
-    const cant = val(`pcg-cant-${i}`);
-    if(cant && Number(cant) > 0){
-      items.push({ categoria: 'Congelados', codigoHorus: p.horus, codigoPlanilla: p.codigo, producto: p.nombre, cantidad: cant, unidadPedido: 'Cajas' });
+      items.push({ categoria: p.categoria, codigoHorus: p.horus, codigoPlanilla: p.planilla, producto: p.nombre, cantidad: cant, unidadPedido: p.unidadPedido });
     }
   });
 
@@ -878,11 +864,9 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
    ========================================================= */
 (function init(){
   document.getElementById('fecha').valueAsDate = new Date();
-  renderStockFiambre();
+  renderStockEmbutidos();
   renderStockCortes();
-  renderStockCongelados();
-  renderPedidoFiambre();
-  renderPedidoCongelados();
+  renderPedidoEmbutidos();
   addClaimRow();
   if(!SCRIPT_URL){
     document.getElementById('config-warning').style.display = 'block';
