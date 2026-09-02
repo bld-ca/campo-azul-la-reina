@@ -275,7 +275,7 @@
 
   <p class="section-hint">Pedidos preparados en planta (Gral. Lagos), miércoles a viernes — un día por sucursal. Cargá cuánto se preparó de cada producto, en cantidad y en kilos.</p>
 
-  <h2 class="section-title first">Fiambrería y Quesos</h2>
+  <h2 class="section-title first">Embutidos</h2>
   <div id="fiambre-list"></div>
 
   <button class="submit-btn" id="btn-produccion">Enviar pedido preparado</button>
@@ -297,43 +297,28 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzx9Mus5Jik8AZ5ubndm
    CATÁLOGO DE PRODUCTOS (mismo que la app de repositores)
    ========================================================= */
 const FIAMBRE_ITEMS = [
-  { horus: "2664", codigo: "101",   nombre: "Chorizo Parrillero en Gancho x 28 un." },
-  { horus: "2746", codigo: "103",   nombre: "Chorizo Especial x 4 un. (env. vacío)" },
-  { horus: "3101", codigo: "401",   nombre: "Bondiola entera (env. vacío)" },
-  { horus: "2904", codigo: "4022",  nombre: "Bondiola Mini Bocha (env. vacío)" },
-  { horus: "2663", codigo: "404",   nombre: "Bondiola Feteada (env. vacío)" },
-  { horus: "3102", codigo: "403/1", nombre: "Lomito entero (env. vacío)" },
-  { horus: "2662", codigo: "403/2", nombre: "Lomito Feteado (env. vacío)" },
-  { horus: "3111", codigo: "504",   nombre: "Chorizo Seco" },
-  { horus: "2866", codigo: "405",   nombre: "Jamón crudo entero grande (env. vacío)" },
-  { horus: "2666", codigo: "405/1", nombre: "Jamón Crudo Grande Feteado (env. vacío)" },
-  { horus: "3134", codigo: "409",   nombre: "Jamón Crudo medio" },
-  { horus: "2973", codigo: "500",   nombre: "Salame Bastón Metro" },
-  { horus: "2874", codigo: "513",   nombre: "Salamín (env. vacío) Campo" },
-  { horus: "2867", codigo: "500/1", nombre: "Salamín x 2" },
-  { horus: "3105", codigo: "501",   nombre: "Salame picado grueso largo / corto" },
-  { horus: "2665", codigo: "503",   nombre: "Salame Picado Grueso (env. vacío)" },
-  { horus: "3115", codigo: "506",   nombre: "Salame ahumado (env. vacío)" },
-  { horus: "3122", codigo: "507",   nombre: "Salame en rodajas (env. vacío)" },
-  { horus: "3130", codigo: "509",   nombre: "Lomito Cocido Especiado entero" },
-  { horus: "3131", codigo: "509/1", nombre: "Lomito Cocido Especiado ahumado Feteado" },
-  { horus: "2667", codigo: "201",   nombre: "Morcilla al Gancho Salada" },
-  { horus: "2935", codigo: "203",   nombre: "Morcilla San Agustín x 4 un. (env. vacío)" },
-  { horus: "3109", codigo: "204",   nombre: "Morcilla dulce San Agustín x un. (env. vacío)" },
-  { horus: "3096", codigo: "301",   nombre: "Queso Gouda Entero (Horma chica)" },
-  { horus: "3099", codigo: "302",   nombre: "Queso Gouda en Trozo (env. vacío)" },
-  { horus: "3093", codigo: "309",   nombre: "Sardo" },
-  { horus: "3100", codigo: "310",   nombre: "Sardo fraccionado" },
-  { horus: "3091", codigo: "303",   nombre: "Saborizado Barra" },
-  { horus: "3098", codigo: "304",   nombre: "Saborizado fraccionado" },
-  { horus: "3095", codigo: "307",   nombre: "Pepato" },
-  { horus: "3097", codigo: "308",   nombre: "Pepato fraccionado" },
-  { horus: "3094", codigo: "305",   nombre: "Provoleta" },
-  { horus: "3132", codigo: "306",   nombre: "Provoleta fraccionada" },
-  { horus: "",     codigo: "",      nombre: "Morcilla Dulce en Gancho" },
-  { horus: "3281", codigo: "",      nombre: "Chorizo en Gancho Saladillo" },
-  { horus: "3286", codigo: "",      nombre: "Morcilla Salada en Gancho Saladillo" },
+  { horus: "2663", codigo: "404",   nombre: "Bondiola feteada E/V" },
+  { horus: "2746", codigo: "103",   nombre: "Chorizo fresco x 4 unid. E/V" },
+  { horus: "2664", codigo: "101",   nombre: "Chorizos frescos en gancho" },
+  { horus: "3281", codigo: "",      nombre: "Chorizos frescos FRS en gancho" },
+  { horus: "2666", codigo: "405/1", nombre: "Jamón crudo feteado E/V" },
+  { horus: "2662", codigo: "403/2", nombre: "Lomito curado feteado E/V" },
+  { horus: "2904", codigo: "4022",  nombre: "Minibondiola E/V" },
+  { horus: "3265", codigo: "",      nombre: "Morcilla Dulce en gancho" },
+  { horus: "2935", codigo: "203",   nombre: "Morcilla E/V x 3 unid" },
+  { horus: "3286", codigo: "",      nombre: "Morcilla FRS en gancho" },
+  { horus: "2667", codigo: "201",   nombre: "Morcillas en gancho" },
+  { horus: "2874", codigo: "513",   nombre: "Salame de Campo E/V" },
+  { horus: "2973", codigo: "500",   nombre: "Salame de Campo en bastón" },
+  { horus: "2867", codigo: "500/1", nombre: "Salame de Campo x 2" },
+  { horus: "2665", codigo: "503",   nombre: "Salame Premium E/V" },
 ];
+// Se sacaron los quesos y los cortes/productos que no están en la app de repositores
+// (Bondiola entera, Lomito entero, Chorizo Seco, Jamón entero, Jamón medio, Salame
+// picado grueso, Salame ahumado, Salame en rodajas, Lomito Cocido Especiado (entero y
+// feteado), Morcilla dulce San Agustín, los Quesos Gouda/Sardo/Saborizado/Pepato/
+// Provoleta) — a pedido de Eugenia, queda solo lo que también existe en repositores.
+// El código interno (`codigo`) de cada uno no se tocó.
 
 /* =========================================================
    RENDER
@@ -423,7 +408,7 @@ document.getElementById('btn-produccion').addEventListener('click', () => {
     const kg = val(`f-kg-${i}`);
     const lote = val(`f-lote-${i}`);
     if(cantidad || kg){
-      items.push({ categoria: 'Fiambrería y Quesos', producto: p.nombre, codigoHorus: p.horus, codigoPlanilla: p.codigo, cantidad, kg, lote });
+      items.push({ categoria: 'Embutidos', producto: p.nombre, codigoHorus: p.horus, codigoPlanilla: p.codigo, cantidad, kg, lote });
     }
   });
 
