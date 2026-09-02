@@ -511,27 +511,26 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzx9Mus5Jik8AZ5ubndm
    DATOS DE PRODUCTOS (tomados de PLANILLAS_REPOSITORES.xlsx)
    ========================================================= */
 const EMBUTIDOS_ITEMS = [
-  { horus: "2663", planilla: "404",   nombre: "Bondiola feteada E/V",           categoria: "Embutidos",  unidadPedido: "Blísters" },
-  { horus: "2746", planilla: "103",   nombre: "Chorizo fresco x 4 unid. E/V",   categoria: "Embutidos",  unidadPedido: "Blísters" },
-  { horus: "2664", planilla: "101",   nombre: "Chorizos frescos en gancho",     categoria: "Embutidos",  unidadPedido: "Blísters" },
-  { horus: "3281", planilla: "",      nombre: "Chorizos frescos FRS en gancho", categoria: "Embutidos",  unidadPedido: "Blísters" },
-  { horus: "2666", planilla: "405/1", nombre: "Jamón crudo feteado E/V",        categoria: "Embutidos",  unidadPedido: "Blísters" },
-  { horus: "2662", planilla: "403/2", nombre: "Lomito curado feteado E/V",      categoria: "Embutidos",  unidadPedido: "Blísters" },
-  { horus: "2904", planilla: "4022",  nombre: "Minibondiola E/V",               categoria: "Embutidos",  unidadPedido: "Blísters" },
-  { horus: "2935", planilla: "203",   nombre: "Morcilla E/V x 3 unid",          categoria: "Embutidos",  unidadPedido: "Blísters" },
-  { horus: "2667", planilla: "201",   nombre: "Morcillas en gancho",            categoria: "Embutidos",  unidadPedido: "Blísters" },
-  { horus: "3286", planilla: "",      nombre: "Morcilla FRS en gancho",         categoria: "Embutidos",  unidadPedido: "Blísters" },
-  { horus: "2874", planilla: "513",   nombre: "Salame de Campo E/V",            categoria: "Embutidos",  unidadPedido: "Blísters" },
-  { horus: "2867", planilla: "500/1", nombre: "Salame de Campo x 2",            categoria: "Embutidos",  unidadPedido: "Blísters" },
-  { horus: "2665", planilla: "503",   nombre: "Salame Premium E/V",             categoria: "Embutidos",  unidadPedido: "Blísters" },
-  { horus: "3265", planilla: "",      nombre: "Morcilla Dulce en gancho",       categoria: "Congelados", unidadPedido: "Cajas" },
-  { horus: "2973", planilla: "",      nombre: "Salame de Campo en bastón",      categoria: "Congelados", unidadPedido: "Cajas" },
+  { horus: "2663", planilla: "404",   nombre: "Bondiola feteada E/V" },
+  { horus: "2746", planilla: "103",   nombre: "Chorizo fresco x 4 unid. E/V" },
+  { horus: "2664", planilla: "101",   nombre: "Chorizos frescos en gancho" },
+  { horus: "3281", planilla: "",      nombre: "Chorizos frescos FRS en gancho" },
+  { horus: "2666", planilla: "405/1", nombre: "Jamón crudo feteado E/V" },
+  { horus: "2662", planilla: "403/2", nombre: "Lomito curado feteado E/V" },
+  { horus: "2904", planilla: "4022",  nombre: "Minibondiola E/V" },
+  { horus: "2935", planilla: "203",   nombre: "Morcilla E/V x 3 unid" },
+  { horus: "2667", planilla: "201",   nombre: "Morcillas en gancho" },
+  { horus: "3286", planilla: "",      nombre: "Morcilla FRS en gancho" },
+  { horus: "2874", planilla: "513",   nombre: "Salame de Campo E/V" },
+  { horus: "2867", planilla: "500/1", nombre: "Salame de Campo x 2" },
+  { horus: "2665", planilla: "503",   nombre: "Salame Premium E/V" },
+  { horus: "3265", planilla: "",      nombre: "Morcilla Dulce en gancho" },
+  { horus: "2973", planilla: "",      nombre: "Salame de Campo en bastón" },
 ].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
 // "planilla" queda en los datos por si la planilla de Google Sheets todavía lo usa para
 // cruzar, pero ya no se le muestra al repositor (pidió ver solo el código Horus).
-// "categoria"/"unidadPedido" son por ítem: los 2 que venían de Congelados todavía viajan
-// a la planilla como "Congelados"/"Cajas" — pendiente que Eugenia confirme si también
-// pasan a "Embutidos"/lo mismo que el resto (ver decisiones.md).
+// Todos viajan con categoría "Embutidos" (los 2 que venían de Congelados ya no se
+// distinguen aparte) y el pedido ya no manda una unidad fija — ver decisiones.md.
 
 const CORTES_ITEMS = [
   { horus: "2752", nombre: "Bondiola" },
@@ -771,7 +770,7 @@ document.getElementById('btn-stock').addEventListener('click', () => {
     for(let l = 0; l < n; l++){
       const gon = val(`sf-gon-${i}-${l}`), cam = val(`sf-cam-${i}-${l}`), vto = val(`sf-vto-${i}-${l}`);
       if(gon || cam || vto){
-        items.push({ categoria: p.categoria, codigoHorus: p.horus, codigoPlanilla: p.planilla, producto: p.nombre, gondola: gon, camara: cam, vencimiento: vto });
+        items.push({ categoria: 'Embutidos', codigoHorus: p.horus, codigoPlanilla: p.planilla, producto: p.nombre, gondola: gon, camara: cam, vencimiento: vto });
       }
     }
   });
@@ -799,7 +798,7 @@ document.getElementById('btn-pedido').addEventListener('click', () => {
   EMBUTIDOS_ITEMS.forEach((p, i) => {
     const cant = val(`pf-cant-${i}`);
     if(cant && Number(cant) > 0){
-      items.push({ categoria: p.categoria, codigoHorus: p.horus, codigoPlanilla: p.planilla, producto: p.nombre, cantidad: cant, unidadPedido: p.unidadPedido });
+      items.push({ categoria: 'Embutidos', codigoHorus: p.horus, codigoPlanilla: p.planilla, producto: p.nombre, cantidad: cant });
     }
   });
 
