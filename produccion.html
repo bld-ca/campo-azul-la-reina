@@ -276,7 +276,10 @@
   <p class="section-hint">Pedidos preparados en planta (Gral. Lagos), miércoles a viernes — un día por sucursal. Cargá cuánto se preparó de cada producto, en cantidad y en kilos.</p>
 
   <h2 class="section-title first">Embutidos</h2>
-  <div id="fiambre-list"></div>
+  <div id="embutidos-list"></div>
+
+  <h2 class="section-title">Fiambres</h2>
+  <div id="fiambres-list"></div>
 
   <button class="submit-btn" id="btn-produccion">Enviar pedido preparado</button>
   <div class="status" id="status-produccion"></div>
@@ -296,22 +299,20 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzx9Mus5Jik8AZ5ubndm
 /* =========================================================
    CATÁLOGO DE PRODUCTOS (mismo que la app de repositores)
    ========================================================= */
-const FIAMBRE_ITEMS = [
-  { horus: "2663", codigo: "404",   nombre: "Bondiola feteada E/V" },
-  { horus: "2746", codigo: "103",   nombre: "Chorizo fresco x 4 unid. E/V" },
-  { horus: "2664", codigo: "101",   nombre: "Chorizos frescos en gancho" },
-  { horus: "3281", codigo: "",      nombre: "Chorizos frescos FRS en gancho" },
-  { horus: "2666", codigo: "405/1", nombre: "Jamón crudo feteado E/V" },
-  { horus: "2662", codigo: "403/2", nombre: "Lomito curado feteado E/V" },
-  { horus: "2904", codigo: "4022",  nombre: "Minibondiola E/V" },
-  { horus: "3265", codigo: "",      nombre: "Morcilla Dulce en gancho" },
-  { horus: "2935", codigo: "203",   nombre: "Morcilla E/V x 3 unid" },
-  { horus: "3286", codigo: "",      nombre: "Morcilla FRS en gancho" },
-  { horus: "2667", codigo: "201",   nombre: "Morcillas en gancho" },
-  { horus: "2874", codigo: "513",   nombre: "Salame de Campo E/V" },
-  { horus: "2973", codigo: "500",   nombre: "Salame de Campo en bastón" },
-  { horus: "2867", codigo: "500/1", nombre: "Salame de Campo x 2" },
-  { horus: "2665", codigo: "503",   nombre: "Salame Premium E/V" },
+const PRODUCTOS_ITEMS = [
+  { horus: "2663", codigo: "404",   cat: "Fiambres",  nombre: "Bondiola feteada E/V" },
+  { horus: "2746", codigo: "103",   cat: "Embutidos", nombre: "Chorizo fresco x 4 unid. E/V" },
+  { horus: "3281", codigo: "",      cat: "Embutidos", nombre: "Chorizo fresco x 12 unid. (FRS)" },
+  { horus: "2666", codigo: "405/1", cat: "Fiambres",  nombre: "Jamón crudo feteado E/V" },
+  { horus: "2662", codigo: "403/2", cat: "Fiambres",  nombre: "Lomito curado feteado E/V" },
+  { horus: "2904", codigo: "4022",  cat: "Fiambres",  nombre: "Minibondiola E/V" },
+  { horus: "3265", codigo: "",      cat: "Embutidos", nombre: "Morcilla Dulce en gancho" },
+  { horus: "2935", codigo: "203",   cat: "Embutidos", nombre: "Morcilla E/V x 3 unid" },
+  { horus: "3286", codigo: "",      cat: "Embutidos", nombre: "Morcilla x 12 unid. (FRS)" },
+  { horus: "2874", codigo: "513",   cat: "Fiambres",  nombre: "Salame de Campo E/V" },
+  { horus: "2973", codigo: "500",   cat: "Fiambres",  nombre: "Salame de Campo en bastón" },
+  { horus: "2867", codigo: "500/1", cat: "Fiambres",  nombre: "Salame de Campo x 2" },
+  { horus: "2665", codigo: "503",   cat: "Fiambres",  nombre: "Salame Premium E/V" },
 ];
 // Se sacaron los quesos y los cortes/productos que no están en la app de repositores
 // (Bondiola entera, Lomito entero, Chorizo Seco, Jamón entero, Jamón medio, Salame
@@ -325,9 +326,10 @@ const FIAMBRE_ITEMS = [
    ========================================================= */
 function el(html){ const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; }
 
-function renderFiambre(){
-  const wrap = document.getElementById('fiambre-list');
-  FIAMBRE_ITEMS.forEach((p, i) => {
+function renderCategoria(cat, wrapId){
+  const wrap = document.getElementById(wrapId);
+  PRODUCTOS_ITEMS.forEach((p, i) => {
+    if(p.cat !== cat) return;
     const codeLabel = p.horus ? (p.codigo ? `H ${p.horus} · C ${p.codigo}` : `H ${p.horus}`) : (p.codigo ? `C ${p.codigo}` : '');
     wrap.appendChild(el(`
       <div class="tag">
@@ -403,12 +405,12 @@ document.getElementById('btn-produccion').addEventListener('click', () => {
   const sucursal = val('sucursal');
   const items = [];
 
-  FIAMBRE_ITEMS.forEach((p, i) => {
+  PRODUCTOS_ITEMS.forEach((p, i) => {
     const cantidad = val(`f-cant-${i}`);
     const kg = val(`f-kg-${i}`);
     const lote = val(`f-lote-${i}`);
     if(cantidad || kg){
-      items.push({ categoria: 'Embutidos', producto: p.nombre, codigoHorus: p.horus, codigoPlanilla: p.codigo, cantidad, kg, lote });
+      items.push({ categoria: p.cat, producto: p.nombre, codigoHorus: p.horus, codigoPlanilla: p.codigo, cantidad, kg, lote });
     }
   });
 
@@ -424,7 +426,8 @@ document.getElementById('btn-produccion').addEventListener('click', () => {
    ========================================================= */
 (function init(){
   document.getElementById('fecha').valueAsDate = new Date();
-  renderFiambre();
+  renderCategoria('Embutidos', 'embutidos-list');
+  renderCategoria('Fiambres', 'fiambres-list');
   if(!SCRIPT_URL){
     document.getElementById('config-warning').style.display = 'block';
   }

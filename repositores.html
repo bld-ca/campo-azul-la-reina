@@ -461,10 +461,16 @@
     <p class="section-hint">Control de stock semanal. Cargá lo que tengas en góndola / cámara para cada producto. Dejá en blanco lo que no aplique.</p>
 
     <h2 class="section-title first">Embutidos</h2>
-    <div id="stock-fiambre-list"></div>
+    <div id="stock-embutidos-list"></div>
 
-    <h2 class="section-title">Cortes</h2>
+    <h2 class="section-title">Cortes frescos</h2>
     <div id="stock-cortes-list"></div>
+
+    <h2 class="section-title">Fiambres</h2>
+    <div id="stock-fiambres-list"></div>
+
+    <h2 class="section-title">Cortes envasados al vacío</h2>
+    <div id="stock-vacio-list"></div>
 
     <button class="submit-btn" id="btn-stock">Enviar control de stock</button>
     <div class="status" id="status-stock"></div>
@@ -475,7 +481,10 @@
     <p class="section-hint">Pedido semanal. Indicá la cantidad a pedir de cada producto. Dejá en 0 o en blanco lo que no se pide.</p>
 
     <h2 class="section-title first">Embutidos — cantidad a pedir</h2>
-    <div id="pedido-fiambre-list"></div>
+    <div id="pedido-embutidos-list"></div>
+
+    <h2 class="section-title">Fiambres — cantidad a pedir</h2>
+    <div id="pedido-fiambres-list"></div>
 
     <button class="submit-btn" id="btn-pedido">Enviar pedido</button>
     <div class="status" id="status-pedido"></div>
@@ -510,27 +519,35 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzx9Mus5Jik8AZ5ubndm
 /* =========================================================
    DATOS DE PRODUCTOS (tomados de PLANILLAS_REPOSITORES.xlsx)
    ========================================================= */
-const EMBUTIDOS_ITEMS = [
-  { horus: "2663", planilla: "404",   nombre: "Bondiola feteada E/V" },
-  { horus: "2746", planilla: "103",   nombre: "Chorizo fresco x 4 unid. E/V" },
-  { horus: "2664", planilla: "101",   nombre: "Chorizos frescos en gancho" },
-  { horus: "3281", planilla: "",      nombre: "Chorizos frescos FRS en gancho" },
-  { horus: "2666", planilla: "405/1", nombre: "Jamón crudo feteado E/V" },
-  { horus: "2662", planilla: "403/2", nombre: "Lomito curado feteado E/V" },
-  { horus: "2904", planilla: "4022",  nombre: "Minibondiola E/V" },
-  { horus: "2935", planilla: "203",   nombre: "Morcilla E/V x 3 unid" },
-  { horus: "2667", planilla: "201",   nombre: "Morcillas en gancho" },
-  { horus: "3286", planilla: "",      nombre: "Morcilla FRS en gancho" },
-  { horus: "2874", planilla: "513",   nombre: "Salame de Campo E/V" },
-  { horus: "2867", planilla: "500/1", nombre: "Salame de Campo x 2" },
-  { horus: "2665", planilla: "503",   nombre: "Salame Premium E/V" },
-  { horus: "3265", planilla: "",      nombre: "Morcilla Dulce en gancho" },
-  { horus: "2973", planilla: "",      nombre: "Salame de Campo en bastón" },
+const CHACINADOS_ITEMS = [
+  { horus: "2663", planilla: "404",   cat: "Fiambres",  nombre: "Bondiola feteada E/V" },
+  { horus: "2746", planilla: "103",   cat: "Embutidos", nombre: "Chorizo fresco x 4 unid. E/V" },
+  { horus: "3281", planilla: "",      cat: "Embutidos", nombre: "Chorizo fresco x 12 unid. (FRS)" },
+  { horus: "2666", planilla: "405/1", cat: "Fiambres",  nombre: "Jamón crudo feteado E/V" },
+  { horus: "2662", planilla: "403/2", cat: "Fiambres",  nombre: "Lomito curado feteado E/V" },
+  { horus: "2904", planilla: "4022",  cat: "Fiambres",  nombre: "Minibondiola E/V" },
+  { horus: "2935", planilla: "203",   cat: "Embutidos", nombre: "Morcilla E/V x 3 unid" },
+  { horus: "3286", planilla: "",      cat: "Embutidos", nombre: "Morcilla x 12 unid. (FRS)" },
+  { horus: "2874", planilla: "513",   cat: "Fiambres",  nombre: "Salame de Campo E/V" },
+  { horus: "2867", planilla: "500/1", cat: "Fiambres",  nombre: "Salame de Campo x 2" },
+  { horus: "2665", planilla: "503",   cat: "Fiambres",  nombre: "Salame Premium E/V" },
+  { horus: "3265", planilla: "",      cat: "Embutidos", nombre: "Morcilla Dulce en gancho" },
+  { horus: "2973", planilla: "",      cat: "Fiambres",  nombre: "Salame de Campo en bastón" },
+  // Cortes envasados al vacío: solo se cargan en Stock (Pedido y Producción no los muestran,
+  // se mandan desde otro lugar). Todavía no tienen código Horus.
+  { horus: "",     planilla: "",      cat: "Cortes envasados al vacío", nombre: "Matambrito E/V" },
+  { horus: "",     planilla: "",      cat: "Cortes envasados al vacío", nombre: "Churrasquito E/V" },
+  { horus: "",     planilla: "",      cat: "Cortes envasados al vacío", nombre: "Bondiola E/V" },
+  { horus: "",     planilla: "",      cat: "Cortes envasados al vacío", nombre: "Solomillo E/V" },
+  { horus: "",     planilla: "",      cat: "Cortes envasados al vacío", nombre: "Carré deshuesado E/V" },
+  { horus: "",     planilla: "",      cat: "Cortes envasados al vacío", nombre: "Pechito E/V" },
+  { horus: "",     planilla: "",      cat: "Cortes envasados al vacío", nombre: "Vacío E/V" },
+  { horus: "",     planilla: "",      cat: "Cortes envasados al vacío", nombre: "Costillar E/V" },
 ].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
 // "planilla" queda en los datos por si la planilla de Google Sheets todavía lo usa para
 // cruzar, pero ya no se le muestra al repositor (pidió ver solo el código Horus).
-// Todos viajan con categoría "Embutidos" (los 2 que venían de Congelados ya no se
-// distinguen aparte) y el pedido ya no manda una unidad fija — ver decisiones.md.
+// "cat" decide en qué sección aparece (Embutidos o Fiambres) y es la categoría que viaja
+// a la planilla. El pedido ya no manda una unidad fija — ver decisiones.md.
 
 const CORTES_ITEMS = [
   { horus: "2752", nombre: "Bondiola" },
@@ -584,14 +601,15 @@ function addLot(prefix, i){
   wrap.appendChild(node);
 }
 
-function renderStockEmbutidos(){
-  const wrap = document.getElementById('stock-fiambre-list');
-  EMBUTIDOS_ITEMS.forEach((p, i) => {
+function renderStockChacinados(cat, wrapId){
+  const wrap = document.getElementById(wrapId);
+  CHACINADOS_ITEMS.forEach((p, i) => {
+    if(p.cat !== cat) return;
     wrap.appendChild(el(`
       <div class="tag">
         <div class="tag-head">
           <div class="tag-name">${p.nombre}</div>
-          <div class="tag-codes">H ${p.horus}</div>
+          ${p.horus ? `<div class="tag-codes">H ${p.horus}</div>` : ""}
         </div>
         <div class="lots" id="sf-lots-${i}"></div>
         <button type="button" class="add-lot" data-add-lot="sf-${i}">+ Otro vencimiento (otro lote)</button>
@@ -625,9 +643,10 @@ function renderStockCortes(){
   });
 }
 
-function renderPedidoEmbutidos(){
-  const wrap = document.getElementById('pedido-fiambre-list');
-  EMBUTIDOS_ITEMS.forEach((p, i) => {
+function renderPedidoChacinados(cat, wrapId){
+  const wrap = document.getElementById(wrapId);
+  CHACINADOS_ITEMS.forEach((p, i) => {
+    if(p.cat !== cat) return;
     wrap.appendChild(el(`
       <div class="tag">
         <div class="tag-head">
@@ -764,20 +783,20 @@ document.getElementById('btn-stock').addEventListener('click', () => {
   const fecha = val('fecha');
   const items = [];
 
-  EMBUTIDOS_ITEMS.forEach((p, i) => {
+  CHACINADOS_ITEMS.forEach((p, i) => {
     const lotsWrap = document.getElementById(`sf-lots-${i}`);
     const n = lotsWrap ? lotsWrap.children.length : 0;
     for(let l = 0; l < n; l++){
       const gon = val(`sf-gon-${i}-${l}`), cam = val(`sf-cam-${i}-${l}`), vto = val(`sf-vto-${i}-${l}`);
       if(gon || cam || vto){
-        items.push({ categoria: 'Embutidos', codigoHorus: p.horus, codigoPlanilla: p.planilla, producto: p.nombre, gondola: gon, camara: cam, vencimiento: vto });
+        items.push({ categoria: p.cat, codigoHorus: p.horus, codigoPlanilla: p.planilla, producto: p.nombre, gondola: gon, camara: cam, vencimiento: vto });
       }
     }
   });
   CORTES_ITEMS.forEach((p, i) => {
     const cam = val(`sc-cam-${i}`);
     if(cam){
-      items.push({ categoria: 'Cortes', codigoHorus: p.horus, codigoPlanilla: '', producto: p.nombre, gondola: '', camara: cam, vencimiento: '' });
+      items.push({ categoria: 'Cortes frescos', codigoHorus: p.horus, codigoPlanilla: '', producto: p.nombre, gondola: '', camara: cam, vencimiento: '' });
     }
   });
 
@@ -795,10 +814,10 @@ document.getElementById('btn-pedido').addEventListener('click', () => {
   const fecha = val('fecha');
   const items = [];
 
-  EMBUTIDOS_ITEMS.forEach((p, i) => {
+  CHACINADOS_ITEMS.forEach((p, i) => {
     const cant = val(`pf-cant-${i}`);
     if(cant && Number(cant) > 0){
-      items.push({ categoria: 'Embutidos', codigoHorus: p.horus, codigoPlanilla: p.planilla, producto: p.nombre, cantidad: cant });
+      items.push({ categoria: p.cat, codigoHorus: p.horus, codigoPlanilla: p.planilla, producto: p.nombre, cantidad: cant });
     }
   });
 
@@ -863,9 +882,12 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
    ========================================================= */
 (function init(){
   document.getElementById('fecha').valueAsDate = new Date();
-  renderStockEmbutidos();
+  renderStockChacinados('Embutidos', 'stock-embutidos-list');
+  renderStockChacinados('Fiambres', 'stock-fiambres-list');
   renderStockCortes();
-  renderPedidoEmbutidos();
+  renderStockChacinados('Cortes envasados al vacío', 'stock-vacio-list');
+  renderPedidoChacinados('Embutidos', 'pedido-embutidos-list');
+  renderPedidoChacinados('Fiambres', 'pedido-fiambres-list');
   addClaimRow();
   if(!SCRIPT_URL){
     document.getElementById('config-warning').style.display = 'block';
