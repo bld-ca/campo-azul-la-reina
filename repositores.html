@@ -486,6 +486,9 @@
     <h2 class="section-title">Fiambres — cantidad a pedir</h2>
     <div id="pedido-fiambres-list"></div>
 
+    <h2 class="section-title">Cortes envasados al vacío — cantidad a pedir</h2>
+    <div id="pedido-vacio-list"></div>
+
     <button class="submit-btn" id="btn-pedido">Enviar pedido</button>
     <div class="status" id="status-pedido"></div>
   </section>
@@ -533,8 +536,8 @@ const CHACINADOS_ITEMS = [
   { horus: "2665", planilla: "503",   cat: "Fiambres",  nombre: "Salame Premium E/V" },
   { horus: "3265", planilla: "",      cat: "Embutidos", nombre: "Morcilla Dulce en gancho" },
   { horus: "2973", planilla: "",      cat: "Fiambres",  nombre: "Salame de Campo en bastón" },
-  // Cortes envasados al vacío: solo se cargan en Stock (Pedido y Producción no los muestran,
-  // se mandan desde otro lugar). Todavía no tienen código Horus.
+  // Cortes envasados al vacío: en Stock y en Pedido (no en Producción: no se preparan en
+  // Gral. Lagos, se mandan desde otro lugar). Todavía no tienen código Horus.
   { horus: "",     planilla: "",      cat: "Cortes envasados al vacío", nombre: "Matambrito E/V" },
   { horus: "",     planilla: "",      cat: "Cortes envasados al vacío", nombre: "Churrasquito E/V" },
   { horus: "",     planilla: "",      cat: "Cortes envasados al vacío", nombre: "Bondiola E/V" },
@@ -888,6 +891,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   renderStockChacinados('Cortes envasados al vacío', 'stock-vacio-list');
   renderPedidoChacinados('Embutidos', 'pedido-embutidos-list');
   renderPedidoChacinados('Fiambres', 'pedido-fiambres-list');
+  renderPedidoChacinados('Cortes envasados al vacío', 'pedido-vacio-list');
   addClaimRow();
   if(!SCRIPT_URL){
     document.getElementById('config-warning').style.display = 'block';
